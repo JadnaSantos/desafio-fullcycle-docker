@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   nginx:
     build:
@@ -30,6 +28,7 @@ services:
 
   db:
     image: mysql:5.7
+    platform: linux/amd64
     command: --innodb-use-native-aio=0
     container_name: db
     restart: always
