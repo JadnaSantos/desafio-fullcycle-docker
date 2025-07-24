@@ -1,25 +1,37 @@
-const mysql = require('mysql');
-const { config } = require('./config');
+const express = require('express');
+const { Repository } = require('./repository');
+const app = express();
 
-async function query(sql) {
-  const conn = mysql.createConnection(config);
+(async () => {
+  const createSql = `
+    CREATE TABLE IF NOT EXISTS people (
+      id INT NOT NULL AUTO_INCREMENT, 
+      name VARCHAR(50), 
+      PRIMARY KEY (id)
+    );
+  `;
+  await Repository.query(createSql);
 
-  const queryPromise = new Promise((resolve, reject) => {
-    conn.query(sql, function (error, results) {
-      if (error) reject(error);
+  const insertSql = `
+    INSERT INTO people (name) VALUES ('John'), ('Doe'), ('SchoolOfNet'), ('CodeEducation');
+  `;
+  await Repository.query(insertSql);
 
-      resolve(results)
-    })
-  })
+  app.listen(3000, () => {
+    console.log('Running on port 3000');
+  });
+})();
 
-  const queryResults = await queryPromise;
+app.get('/', async (_, res) => {
+  const selectSql = `SELECT * FROM people`;
+  const people = await Repository.query(selectSql);
 
-  conn.end();
-  return queryResults;
-}
+  const title = '<h1>FullCycle Rocks!</h1>';
+  const list = `
+    <ul>
+      ${people.map(p => `<li>${p.name}</li>`).join('')}
+    </ul>
+  `;
 
-const Repository = {
-  query
-}
-
-module.exports = { Repository }
+  res.send(title + list);
+});
