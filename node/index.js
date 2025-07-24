@@ -26,7 +26,7 @@ app.get('/', async (_, res) => {
   const selectSql = `SELECT * FROM people`;
   const people = await Repository.query(selectSql);
 
-  const title = '<h1>FullCycle Rocks!</h1>';
+  const title = '<h1>Full Cycle Rocks!</h1>';
   const list = `
     <ul>
       ${people.map(p => `<li>${p.name}</li>`).join('')}
